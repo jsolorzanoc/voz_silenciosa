@@ -49,6 +49,14 @@ export default function Layout() {
             <NavLink to="/directorio" className={navLinkClass}>
               Directorio
             </NavLink>
+            <NavLink to="/grupos" className={navLinkClass}>
+              Grupos
+            </NavLink>
+            {profile?.role === 'admin' && (
+              <NavLink to="/admin" className={navLinkClass}>
+                Panel
+              </NavLink>
+            )}
 
             {session ? (
               <div className="ml-2 flex items-center gap-2">

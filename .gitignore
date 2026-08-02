@@ -1,0 +1,28 @@
+# Dependencias y builds
+node_modules/
+dist/
+dev-dist/
+
+# Variables de entorno (nunca llaves reales en el repo)
+.env
+.env.*
+!.env.example
+
+# Material fuente local del curso (la copia oficial vive en /docs)
+Recursos/
+
+# Supabase local
+supabase/.temp/
+supabase/.branches/
+
+# Pruebas
+web/playwright-report/
+web/test-results/
+coverage/
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/

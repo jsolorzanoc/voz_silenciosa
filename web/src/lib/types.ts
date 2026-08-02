@@ -59,3 +59,58 @@ export interface Profile {
   university_id: string;
   role: 'student' | 'admin';
 }
+
+export interface SupportGroup {
+  id: string;
+  university_id: string | null;
+  name: string;
+  topic: string;
+  description: string | null;
+  active: boolean;
+}
+
+export interface GroupSession {
+  id: string;
+  group_id: string;
+  title: string;
+  starts_at: string;
+  modality: 'presencial' | 'virtual';
+  location: string | null;
+}
+
+export interface GroupMessage {
+  id: string;
+  group_id: string;
+  user_id: string;
+  author_pseudonym: string;
+  content: string;
+  flagged: boolean;
+  hidden: boolean;
+  created_at: string;
+}
+
+export interface AdminOverview {
+  students: number;
+  admins: number;
+  groups_active: number;
+  assessments_total: number;
+  crisis_total: number;
+  flagged_pending: number;
+}
+
+export interface AssessmentStat {
+  instrument: Instrument;
+  level: RiskLevel;
+  total: number;
+}
+
+export interface ReferralStat {
+  resource: Resource;
+  total: number;
+}
+
+export interface HelpStat {
+  day: string;
+  channel: 'principal' | 'respaldo';
+  total: number;
+}

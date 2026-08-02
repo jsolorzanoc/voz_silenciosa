@@ -1,0 +1,5 @@
+project_id = "lavozsilenciosa"
+
+[functions.score-assessment]
+# El puntaje solo se calcula para usuarios autenticados
+verify_jwt = true

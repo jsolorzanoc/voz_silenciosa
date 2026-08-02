@@ -1,0 +1,39 @@
+# CI del proyecto (HU-02): linter y pruebas en cada PR y en main.
+# Nada roto llega a la rama principal.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  web:
+    name: Lint, pruebas y build (web)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Linter (ESLint)
+        run: npm run lint
+
+      - name: Pruebas unitarias (Vitest)
+        run: npm run test:unit
+
+      - name: Auditoría de dependencias
+        run: npm audit --audit-level=high
+
+      - name: Build de producción
+        run: npm run build

@@ -33,6 +33,20 @@ function logHelpEvent(
     .then(() => undefined);
 }
 
+// Copia local de las líneas para que el botón funcione sin conexión
+// (modo offline de la PWA, WBS 1.6.1.2). Son datos públicos, no sensibles.
+const LINES_CACHE_KEY = 'lvs_emergency_lines';
+
+function readCachedLines(): EmergencyLine[] {
+  try {
+    const raw = localStorage.getItem(LINES_CACHE_KEY);
+    const parsed = raw ? (JSON.parse(raw) as EmergencyLine[]) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function HelpButton() {
   const [open, setOpen] = useState(false);
   const [lines, setLines] = useState<EmergencyLine[]>([]);
@@ -49,18 +63,18 @@ export default function HelpButton() {
         .order('priority', { ascending: true });
 
       if (error || !data || data.length === 0) {
-        // Protocolo de respaldo (HU-10): canal principal caído
-        setChannelFailed(true);
-        setLines([]);
-        logHelpEvent('respaldo', 'fallo_canal');
-      } else {
-        setChannelFailed(false);
-        setLines(data);
-        logHelpEvent('principal', 'ok');
+        throw new Error('canal principal no disponible');
       }
+      setChannelFailed(false);
+      setLines(data);
+      localStorage.setItem(LINES_CACHE_KEY, JSON.stringify(data));
+      logHelpEvent('principal', 'ok');
     } catch {
+      // Protocolo de respaldo (HU-10): canal caído o sin conexión.
+      // Se usan las líneas guardadas localmente; si tampoco hay,
+      // queda el 9-1-1 fijo en el código. Nunca sin salida.
       setChannelFailed(true);
-      setLines([]);
+      setLines(readCachedLines());
       logHelpEvent('respaldo', 'fallo_canal');
     }
   }, []);
@@ -129,13 +143,14 @@ export default function HelpButton() {
                 role="alert"
                 className="mt-3 rounded-md bg-amber-100 p-3 text-amber-900"
               >
-                No pudimos cargar el canal principal. Usa las líneas de
-                respaldo: siempre hay una salida disponible.
+                {lines.length > 0
+                  ? 'Sin conexión con el canal principal: te mostramos las líneas guardadas en tu dispositivo. Siempre hay una salida disponible.'
+                  : 'No pudimos cargar las líneas. Usa el número de emergencias: siempre hay una salida disponible.'}
               </p>
             )}
 
             <ul className="mt-4 space-y-3">
-              {(channelFailed ? [] : primaryLines).map((line) => (
+              {primaryLines.map((line) => (
                 <li key={line.id}>
                   <LineCard
                     name={line.name}
@@ -144,17 +159,16 @@ export default function HelpButton() {
                   />
                 </li>
               ))}
-              {(channelFailed || backupLines.length > 0) &&
-                backupLines.map((line) => (
-                  <li key={line.id}>
-                    <LineCard
-                      name={`${line.name} (respaldo)`}
-                      phone={line.phone}
-                      description={line.description}
-                    />
-                  </li>
-                ))}
-              {channelFailed && (
+              {backupLines.map((line) => (
+                <li key={line.id}>
+                  <LineCard
+                    name={`${line.name} (respaldo)`}
+                    phone={line.phone}
+                    description={line.description}
+                  />
+                </li>
+              ))}
+              {channelFailed && lines.length === 0 && (
                 <li>
                   <LineCard
                     name={LAST_RESORT_LINE.name}

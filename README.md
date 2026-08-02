@@ -60,6 +60,7 @@ URL y la anon key del proyecto en `web/.env`.
 | `npm run format`       | Prettier                                    |
 | `npm run test:unit`    | Pruebas unitarias (Vitest)                  |
 | `npm run test:e2e`     | Pruebas E2E (Playwright; requiere `.env`)   |
+| `npm run test:security`| Suite de seguridad RLS contra el ambiente   |
 
 ## Modelo de seguridad (resumen)
 
@@ -80,6 +81,16 @@ URL y la anon key del proyecto en `web/.env`.
   datos personales (HU-09, HU-10).
 - **Secretos fuera del repositorio:** solo `.env.example` sin llaves; la
   service role jamás toca el frontend.
+- **Derecho de eliminación (Ley 8968):** desde "Mi cuenta" el usuario
+  borra su cuenta y todos sus datos vía la Edge Function
+  `delete-account`, con borrado en cascada.
+- **Offline seguro:** la PWA precachea solo el shell de la app (nunca
+  respuestas de la API con datos de salud); las líneas de emergencia se
+  guardan localmente para que el botón de ayuda funcione sin conexión.
+
+Documentos de cierre: [plan de pruebas](docs/plan-de-pruebas.md),
+[auditoría Ley 8968 + OWASP](docs/auditoria-ley-8968.md) y
+[documentación técnica](docs/documentacion-tecnica.md).
 
 ## Pruebas
 

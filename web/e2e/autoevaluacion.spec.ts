@@ -23,11 +23,14 @@ test('un envío incompleto se bloquea y resalta el ítem pendiente (HU-04 caso 2
   await page.getByLabel(/correo institucional/i).fill(email!);
   await page.getByLabel(/contraseña/i).fill(password!);
   await page.getByRole('button', { name: /^ingresar$/i }).click();
-  await expect(
-    page.getByRole('link', { name: /la voz silenciosa/i }),
-  ).toBeVisible();
+  // El chip "Mi cuenta" solo existe con sesión activa
+  await expect(page.getByRole('link', { name: /mi cuenta/i })).toBeVisible();
 
-  await page.goto('/autoevaluacion');
+  // Navegación SPA (sin recarga) para conservar la sesión recién creada
+  await page
+    .getByRole('navigation')
+    .getByRole('link', { name: /autoevaluación/i })
+    .click();
   await page.getByRole('checkbox').check();
   await page.getByRole('button', { name: /phq-9/i }).click();
 

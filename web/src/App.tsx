@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router';
 import AdminRoute from './components/AdminRoute';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import Account from './pages/Account';
 import AdminPanel from './pages/admin/AdminPanel';
 import Assessment from './pages/Assessment';
 import Directory from './pages/Directory';
@@ -57,6 +58,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <GroupForum />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="cuenta"
+          element={
+            <ProtectedRoute>
+              <Account />
             </ProtectedRoute>
           }
         />

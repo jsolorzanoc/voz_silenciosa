@@ -10,6 +10,15 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        // Modo offline (WBS 1.6.1.2): se precachea el shell de la app y
+        // la navegación cae a index.html sin conexión. Deliberadamente
+        // NO se cachean respuestas de la API: contienen datos sensibles
+        // de salud (Ley 8968). Las líneas de emergencia se guardan en
+        // localStorage desde el botón de ayuda (datos públicos).
+        navigateFallback: '/index.html',
+        globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
+      },
       manifest: {
         name: 'La Voz Silenciosa',
         short_name: 'Voz Silenciosa',

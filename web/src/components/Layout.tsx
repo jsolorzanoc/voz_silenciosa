@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import HelpButton from './HelpButton';
+import InstallPrompt from './InstallPrompt';
 
 /**
  * Estructura común: encabezado, navegación, contenido y botón de
@@ -60,9 +61,13 @@ export default function Layout() {
 
             {session ? (
               <div className="ml-2 flex items-center gap-2">
-                <span className="rounded-full bg-violet-800 px-3 py-1 text-sm">
+                <Link
+                  to="/cuenta"
+                  aria-label="Mi cuenta"
+                  className="rounded-full bg-violet-800 px-3 py-1 text-sm hover:bg-violet-950 focus:outline-2 focus:outline-offset-2 focus:outline-white"
+                >
                   {profile?.pseudonym ?? '…'}
-                </span>
+                </Link>
                 <button
                   type="button"
                   onClick={() => void signOut()}
@@ -79,6 +84,8 @@ export default function Layout() {
           </nav>
         </div>
       </header>
+
+      <InstallPrompt />
 
       <main
         id="contenido"

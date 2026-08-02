@@ -7,10 +7,14 @@ import { expect, test } from '@playwright/test';
 test('el registro rechaza correos de dominio público', async ({ page }) => {
   await page.goto('/registro');
 
+  // Espera la lista de dominios aceptados: garantiza que la validación
+  // de dominio del cliente ya está activa (el servidor la repite igual)
+  await expect(page.getByText(/dominios aceptados/i)).toBeVisible();
+
   await page.getByLabel(/correo institucional/i).fill('persona@gmail.com');
   await page.getByLabel(/seudónimo/i).fill('lobo_azul');
   await page.getByLabel(/contraseña/i).fill('ClaveSegura123');
   await page.getByRole('button', { name: /crear cuenta/i }).click();
 
-  await expect(page.getByRole('alert')).toContainText(/institucionales/i);
+  await expect(page.getByRole('alert')).toContainText(/institucional/i);
 });
